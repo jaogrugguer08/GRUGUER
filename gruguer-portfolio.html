@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gruguer — Edição de Vídeo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-alt: #141210;
+    --bg-card: #161412;
+    --red: #8b0000;
+    --red-bright: #b3241d;
+    --text: #f4f1ec;
+    --text-dim: #8f8a83;
+    --line: #2a2624;
+    --font-display: 'Anton', 'Arial Narrow', sans-serif;
+    --font-body: 'Work Sans', -apple-system, sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: inherit; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(72px + env(safe-area-inset-top, 0px)); }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  img, svg { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+  /* Nav */
+  header.nav {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: rgba(10,10,10,0.86);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-mark {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+  }
+  .nav-links { display: flex; gap: 28px; font-size: 0.92rem; color: var(--text-dim); }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links { display: none; }
+  @media (min-width: 640px) { .nav-links { display: flex; } }
+
+  /* Hero */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 28px 80px;
+    position: relative;
+  }
+  .hero-inner { max-width: 1080px; margin: 0 auto; width: 100%; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(4.2rem, 16vw, 9.5rem);
+    line-height: 0.86;
+    letter-spacing: 1px;
+    color: var(--text);
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .hero .cut {
+    color: var(--red);
+    display: inline-block;
+  }
+  .hero p.tag {
+    margin-top: 26px;
+    max-width: 460px;
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    font-weight: 400;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.2,.7,.2,1) 0.15s forwards;
+  }
+  .hero-rule {
+    width: 64px;
+    height: 4px;
+    background: var(--red);
+    margin: 32px 0 0;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.2,.7,.2,1) 0.3s forwards;
+  }
+  .hero-cta {
+    margin-top: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text);
+    border: 1px solid var(--line);
+    padding: 14px 22px;
+    width: fit-content;
+    transition: border-color 0.25s ease, background 0.25s ease;
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(.2,.7,.2,1) 0.42s forwards;
+  }
+  .hero-cta:hover { border-color: var(--red); background: rgba(139,0,0,0.12); }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero h1, .hero p.tag, .hero-rule, .hero-cta { animation: none; opacity: 1; }
+  }
+
+  /* Section shared */
+  section { padding: 90px 0; border-top: 1px solid var(--line); }
+  .section-head { margin-bottom: 48px; max-width: 560px; }
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.1rem, 5vw, 3.2rem);
+    letter-spacing: 0.5px;
+  }
+  .section-head p { margin-top: 14px; color: var(--text-dim); font-size: 1.02rem; }
+
+  /* Work grid */
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (min-width: 720px) {
+    .work-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .work-card {
+    background: var(--bg-card);
+    display: block;
+    position: relative;
+  }
+  .work-cover {
+    aspect-ratio: 16 / 10;
+    position: relative;
+    overflow: hidden;
+    background: #0d0b0a;
+  }
+  .work-cover svg { width: 100%; height: 100%; display: block; }
+  .play-btn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .play-btn span {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(244,241,236,0.55);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,10,10,0.35);
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+  }
+  .work-card:hover .play-btn span {
+    border-color: var(--red-bright);
+    background: rgba(139,0,0,0.55);
+    transform: scale(1.06);
+  }
+  .play-btn svg { width: 18px; height: 18px; margin-left: 3px; }
+  .work-meta {
+    padding: 22px 24px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .work-meta .take {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+  .work-meta .cat {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    text-align: right;
+  }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media (min-width: 720px) {
+    .about-grid { grid-template-columns: 1.1fr 0.9fr; }
+  }
+  .about-body p { color: var(--text-dim); font-size: 1.05rem; max-width: 52ch; }
+  .about-body p + p { margin-top: 16px; }
+  .about-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
+  .about-list div {
+    display: flex; justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+  .about-list span:first-child { color: var(--text-dim); }
+
+  /* Contact */
+  .contact-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .contact-inner h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 7vw, 4.4rem);
+    line-height: 1;
+  }
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 40px;
+    margin-top: 8px;
+  }
+  .contact-row a {
+    font-size: 1rem;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 4px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .contact-row a:hover { color: var(--red-bright); border-color: var(--red-bright); }
+
+  footer {
+    padding: 32px 0 40px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-mark">GRUGUER</div>
+    <nav class="nav-links">
+      <a href="#trabalhos">Trabalhos</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>GRU<span class="cut">GUER</span></h1>
+    <div class="hero-rule"></div>
+    <p class="tag">Edição de vídeo para vlogs, clipes de redes sociais e o que mais precisar cortar, ritmar e entregar pronto.</p>
+    <a class="hero-cta" href="#trabalhos">
+      Ver trabalhos
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+<section id="trabalhos">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Trabalhos</h2>
+      <p>Uma seleção de vídeos editados. Clique em qualquer um para assistir no YouTube.</p>
+    </div>
+
+    <div class="work-grid">
+
+      <a class="work-card" href="https://youtu.be/H-NkkgQNvYo" target="_blank" rel="noopener">
+        <div class="work-cover">
+          <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="250" fill="#120e0d"/>
+            <polygon points="0,250 90,60 180,250" fill="#1c1310"/>
+            <polygon points="120,250 230,20 340,250" fill="#221512"/>
+            <line x1="0" y1="210" x2="400" y2="210" stroke="#8b0000" stroke-width="2" opacity="0.6"/>
+            <line x1="0" y1="150" x2="400" y2="150" stroke="#3a2320" stroke-width="1"/>
+          </svg>
+          <div class="play-btn"><span><svg viewBox="0 0 24 24" fill="#f4f1ec"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="work-meta">
+          <span class="take">Take 01</span>
+          <span class="cat">Vlog / Redes sociais</span>
+        </div>
+      </a>
+
+      <a class="work-card" href="https://youtu.be/Hg9CRsqeoEY" target="_blank" rel="noopener">
+        <div class="work-cover">
+          <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="250" fill="#100e0c"/>
+            <circle cx="320" cy="60" r="120" fill="#1d1310"/>
+            <circle cx="320" cy="60" r="70" fill="#241512"/>
+            <rect x="0" y="0" width="6" height="250" fill="#8b0000" opacity="0.7"/>
+          </svg>
+          <div class="play-btn"><span><svg viewBox="0 0 24 24" fill="#f4f1ec"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="work-meta">
+          <span class="take">Take 02</span>
+          <span class="cat">Clipe / Redes sociais</span>
+        </div>
+      </a>
+
+      <a class="work-card" href="https://youtu.be/1Tjh3XCQKKs" target="_blank" rel="noopener">
+        <div class="work-cover">
+          <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="250" fill="#110d0c"/>
+            <g stroke="#241512" stroke-width="10">
+              <line x1="0" y1="30" x2="400" y2="30"/>
+              <line x1="0" y1="70" x2="400" y2="70"/>
+              <line x1="0" y1="110" x2="400" y2="110"/>
+            </g>
+            <rect x="0" y="150" width="400" height="100" fill="#1a1210"/>
+            <rect x="0" y="150" width="400" height="4" fill="#8b0000" opacity="0.7"/>
+          </svg>
+          <div class="play-btn"><span><svg viewBox="0 0 24 24" fill="#f4f1ec"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="work-meta">
+          <span class="take">Take 03</span>
+          <span class="cat">Edição diversa</span>
+        </div>
+      </a>
+
+      <a class="work-card" href="https://youtu.be/E2ew1kkWqHI" target="_blank" rel="noopener">
+        <div class="work-cover">
+          <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="250" fill="#100e0d"/>
+            <path d="M0,180 C100,100 300,240 400,140 L400,250 L0,250 Z" fill="#1c1310"/>
+            <path d="M0,210 C120,150 280,250 400,180 L400,250 L0,250 Z" fill="#241512"/>
+            <circle cx="70" cy="70" r="3" fill="#8b0000"/>
+            <circle cx="90" cy="70" r="3" fill="#8b0000" opacity="0.5"/>
+            <circle cx="110" cy="70" r="3" fill="#8b0000" opacity="0.3"/>
+          </svg>
+          <div class="play-btn"><span><svg viewBox="0 0 24 24" fill="#f4f1ec"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="work-meta">
+          <span class="take">Take 04</span>
+          <span class="cat">Vlog / Redes sociais</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section id="sobre">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about-body">
+        <div class="section-head" style="margin-bottom:20px;">
+          <h2>Sobre</h2>
+        </div>
+        <p>Gruguer edita vídeo com foco em ritmo: cortes que acompanham a fala, a música e o momento certo de cada cena, pensados para vlogs e conteúdo de redes sociais.</p>
+        <p>Cada projeto é tratado de forma diferente — o corte de um vlog não é o corte de um clipe curto para redes sociais.</p>
+      </div>
+      <div class="about-list">
+        <div><span>Formatos</span><span>Vlog, redes sociais, diversos</span></div>
+        <div><span>Ferramentas</span><span>Edição, cor, som</span></div>
+        <div><span>Entrega</span><span>Sob demanda</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contato">
+  <div class="wrap contact-inner">
+    <h2>Vamos<br><span style="color:var(--red)">editar</span> algo.</h2>
+    <div class="contact-row">
+      <a href="mailto:jaogruguer@gmail.com">jaogruguer@gmail.com</a>
+      <a href="https://www.instagram.com/jaosamoraa" target="_blank" rel="noopener">@jaosamoraa</a>
+      <a href="https://www.youtube.com/channel/UCLuPWzW7QpD3hm-mMs56C8Q" target="_blank" rel="noopener">YouTube</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%;">
+    <span>Gruguer</span>
+    <span>Edição de vídeo</span>
+  </div>
+</footer>
+
+</body>
+</html>
